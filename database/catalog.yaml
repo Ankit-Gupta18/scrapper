@@ -59,11 +59,11 @@ companies:
   board: delhivery
 - provider: darwinbox
   company: Cars24
-  enabled: true
+  enabled: false  # disabled: removed by request
   board: cars24
 - provider: darwinbox
   company: Zepto
-  enabled: true
+  enabled: false  # disabled: removed by request
   board: zepto
 # --- Phenom (vendor hosting many enterprise career sites) ---
 # board = careers host; the vendor's own Phenom site is used as a working seed.
@@ -274,7 +274,7 @@ companies:
   board: groww
 - provider: greenhouse
   company: HubSpot Product
-  enabled: true
+  enabled: false  # disabled: removed by request
   board: hubspot
 - provider: greenhouse
   company: HubSpot
@@ -302,7 +302,7 @@ companies:
   board: phonepe
 - provider: greenhouse
   company: Postman
-  enabled: true
+  enabled: false  # disabled: removed by request
   board: postman
 - provider: greenhouse
   company: Razorpay Software Private Limited
@@ -401,7 +401,7 @@ companies:
   board: cisco/Cisco_Careers
 - provider: workday
   company: Wells Fargo
-  enabled: true
+  enabled: false  # disabled: removed by request
   tenant_host: wf.wd1.myworkdayjobs.com
   client_slug: wf
   site_slug: WellsFargoJobs
@@ -486,7 +486,7 @@ companies:
   board: microsoft
 - provider: workable
   company: Postman
-  enabled: true
+  enabled: false  # disabled: removed by request
   board: postman
 - provider: workday
   company: Autodesk

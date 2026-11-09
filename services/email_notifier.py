@@ -160,10 +160,6 @@ class EmailService:
         msg["To"] = self.recipient
         msg.set_content(text_body)
         msg.add_alternative(self._build_html(grouped, len(jobs), failures, run_label), subtype="html")
-        # Full plain-text list as an attachment (Gmail clips very long HTML emails).
-        msg.add_attachment(text_body.encode("utf-8"), maintype="text", subtype="plain",
-                           filename="new_jobs.txt")
-
         try:
             with smtplib.SMTP(self.host, self.port, timeout=30) as server:
                 server.starttls()
