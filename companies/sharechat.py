@@ -66,7 +66,7 @@ class SharechatScraper(BaseJobScraper):
             response_json = response.json()
         except Exception as e:
             print(f"[{self.company_name}] Failed to fetch jobs: {e}")
-            return []
+            raise
 
         # Extract categories array from data.careersList
         careers_list = response_json.get("data", {}).get("careersList", [])

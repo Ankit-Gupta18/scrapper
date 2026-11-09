@@ -40,7 +40,7 @@ class BaseGreenhouseScraper(BaseJobScraper):
             data = response.json()
         except Exception as e:
             print(f"[{self.company_name}] Failed: {e} for url: {self.api_url}")
-            return []
+            raise
 
         raw_jobs = []
         jobs_list = data.get("jobs", [])

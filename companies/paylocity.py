@@ -1,5 +1,6 @@
 # companies/paylocity.py
 import re
+from urllib.parse import urljoin
 import requests
 from bs4 import BeautifulSoup
 from typing import List, Dict, Any
@@ -70,7 +71,7 @@ class PaylocityScraper(BaseJobScraper):
             html_content = response.text
         except Exception as e:
             print(f"[{self.company_name}] Failed to fetch jobs: {e}")
-            return []
+            raise
 
         soup = BeautifulSoup(html_content, "html.parser")
         raw_jobs = []
@@ -86,7 +87,7 @@ class PaylocityScraper(BaseJobScraper):
             if not href:
                 continue
 
-            full_url = href if href.startswith("http") else f"https://www.paylocity.com{href}"
+            full_url = urljoin("https://www.paylocity.com/", href)
 
             # Extract job ID (e.g. .job.46500 or /job/46500)
             job_id_match = re.search(r"\.job\.(\d+)|/job/(\d+)", full_url)

@@ -33,7 +33,7 @@ class GrowwScraper(BaseJobScraper):
                 return res.json().get("jobs", [])
             except Exception as e:
                 print(f"[{self.company_name}] Fetch failed: {e}")
-                return []
+                raise
 
     def parse_jobs(self, raw_jobs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         parsed_jobs = []

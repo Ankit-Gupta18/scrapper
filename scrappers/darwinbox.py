@@ -60,7 +60,7 @@ class BaseDarwinboxScraper(BaseJobScraper):
             res_json = response.json()
         except Exception as e:
             print(f"[{self.company_name}] Failed to fetch jobs via Darwinbox API: {e}")
-            return []
+            raise
 
         # Robust extraction of the jobs array across different response formats
         job_list = []

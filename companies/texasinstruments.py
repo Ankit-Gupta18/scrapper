@@ -45,7 +45,7 @@ class TexasinstrumentsScraper(BaseJobScraper):
             res_json = response.json()
         except Exception as e:
             print(f"[{self.company_name}] Failed to fetch jobs via TI Oracle API: {e}")
-            return []
+            raise
 
         items = res_json.get("items", [])
         if not items or not isinstance(items, list):

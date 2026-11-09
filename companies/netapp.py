@@ -97,7 +97,7 @@ class NetappScraper(BaseJobScraper):
             data = response.json()
         except Exception as e:
             print(f"[{self.company_name}] Failed to fetch jobs: {e}")
-            return []
+            raise
 
         html_results = data.get("results", "")
         if not html_results:

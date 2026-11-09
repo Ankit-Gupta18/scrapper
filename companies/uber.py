@@ -59,7 +59,7 @@ class UberScraper(BaseJobScraper):
             response.raise_for_status()
         except Exception as e:
             print(f"[Uber] sitemap failed: {e}")
-            return []
+            raise
 
         cutoff = datetime.now(timezone.utc) - timedelta(days=UBER_RECENT_DAYS)
         recent: List[tuple[str, str]] = []

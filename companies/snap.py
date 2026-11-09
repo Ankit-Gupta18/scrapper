@@ -50,7 +50,7 @@ class SnapScraper(BaseJobScraper):
             data = response.json()
         except Exception as e:
             print(f"[Snap] fetch failed: {e}")
-            return []
+            raise
         return data.get("body") or []
 
     def parse_jobs(self, raw_jobs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:

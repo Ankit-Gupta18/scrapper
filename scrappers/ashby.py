@@ -42,7 +42,7 @@ class BaseAshbyScraper(BaseJobScraper):
             return data.get("jobs", [])
         except Exception as e:
             print(f"[{self.company_name}] Failed to fetch Ashby jobs: {e}")
-            return []
+            raise
 
     def parse_jobs(self, raw_jobs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         parsed_jobs = []

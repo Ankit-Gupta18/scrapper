@@ -56,7 +56,7 @@ class MetaScraper(BaseJobScraper):
             response.raise_for_status()
         except Exception as e:
             print(f"[Meta] sitemap failed: {e}")
-            return []
+            raise
         pairs = SITEMAP_URL_RE.findall(response.text)
         pairs.sort(key=lambda x: x[1], reverse=True)
         return pairs[:META_MAX_DETAIL_FETCHES]

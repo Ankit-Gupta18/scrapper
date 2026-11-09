@@ -64,7 +64,7 @@ class BaseAshbyGraphQLScraper(BaseJobScraper):
             data = response.json()
         except Exception as e:
             print(f"[{self.company_name}] Ashby GraphQL fetch failed: {e}")
-            return []
+            raise
 
         return ((data.get("data") or {}).get("jobBoard") or {}).get("jobPostings") or []
 

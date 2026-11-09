@@ -87,7 +87,7 @@ class ZohoScraper(BaseJobScraper):
 
         except Exception as e:
             print(f"[{self.company_name}] Failed to fetch jobs: {e}")
-            return []
+            raise
 
         return raw_jobs
 
