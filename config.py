@@ -17,6 +17,11 @@ class Config:
     SMTP_HOST = os.getenv("SMTP_HOST", "smtp.gmail.com")
     SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
 
+    # A scraper that fails this many runs in a row is flagged in the email and triggers an alert
+    # email (even with no new jobs). It's repeated every FAIL_REMINDER_EVERY runs while it keeps failing.
+    FAIL_ALERT_THRESHOLD = int(os.getenv("FAIL_ALERT_THRESHOLD", "3"))
+    FAIL_REMINDER_EVERY = int(os.getenv("FAIL_REMINDER_EVERY", "12"))
+
     # Set SEND_EMAIL=false to record jobs as seen without emailing (used for baseline runs)
     SEND_EMAIL = os.getenv("SEND_EMAIL", "true").strip().lower() in ("1", "true", "yes")
 
