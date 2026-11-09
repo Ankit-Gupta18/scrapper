@@ -1,0 +1,73 @@
+name: Job scraper
+
+on:
+  schedule:
+    # Every 2 hours (UTC). GitHub may start scheduled runs a few minutes late.
+    - cron: "0 */2 * * *"
+  workflow_dispatch:
+    inputs:
+      baseline:
+        description: "Baseline run: save all current jobs as seen WITHOUT sending email (use for the first run)"
+        type: boolean
+        default: false
+
+# Never run two scrapes at once (they share the jobs.db cache)
+concurrency:
+  group: job-scraper
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      MAX_WORKERS: "50"
+      USE_TELEGRAM: "false"
+      DB_PATH: database/jobs.db
+      EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
+      EMAIL_APP_PASSWORD: ${{ secrets.EMAIL_APP_PASSWORD }}
+      EMAIL_TO: ${{ secrets.EMAIL_TO }}
+      SEND_EMAIL: ${{ inputs.baseline && 'false' || 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # jobs.db remembers which jobs were already emailed. The cache is restored from the
+      # newest saved copy and a fresh copy is saved after every run.
+      - name: Restore jobs database
+        uses: actions/cache/restore@v4
+        with:
+          path: database/jobs.db
+          key: jobs-db-${{ github.run_id }}
+          restore-keys: jobs-db-
+
+      - name: Run scraper
+        run: python main.py
+
+      - name: Save jobs database
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: database/jobs.db
+          key: jobs-db-${{ github.run_id }}
+
+      - name: Upload log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scraper-log
+          path: |
+            scraper.log
+            job_links/
+          retention-days: 7
+          if-no-files-found: ignore

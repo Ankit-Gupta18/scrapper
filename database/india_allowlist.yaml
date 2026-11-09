@@ -1,0 +1,95 @@
+# India company allowlist, used by scripts/import_from_ats_scrapers.py
+# to filter the global ATS inventory down to companies that hire for India.
+#
+# Match semantics: EXACT, case-insensitive, against the CSV `name` OR `slug`.
+# Substring matching was tried and flooded with false positives
+# ("cred" → "Credal", "apple" → "Apple Roofing"). If a slug differs from the
+# common name (e.g. "Razorpay Software Private Limited" → razorpaysoftwareprivatelimited),
+# add the slug explicitly as another entry.
+
+india_companies:
+  # --- India-headquartered ---
+  - airmeet
+  - browserstack
+  - cars24
+  - chargebee
+  - clevertap
+  - cred
+  - digit insurance
+  - dream11
+  - freshworks
+  - groww
+  - hasura
+  - khatabook
+  - licious
+  - meesho
+  - mindtickle
+  - moengage
+  - mpl
+  - ninjacart
+  - ola
+  - paytm
+  - phonepe
+  - physicswallah
+  - pine labs
+  - postman
+  - rapido
+  - razorpay
+  - razorpaysoftwareprivatelimited  # alt slug seen on Greenhouse
+  - rupeek
+  - scaler
+  - sharechat
+  - slice
+  - swiggy
+  - unacademy
+  - upstox
+  - urban company
+  - vedantu
+  - whatfix
+  - zepto
+  - zerodha
+  - zomato
+  - zoho
+  # --- Global cohort with notable India engineering offices ---
+  - airbnb
+  - akamai
+  - amazon
+  - apple
+  - atlassian
+  - autodesk
+  - canonical
+  - cloudflare
+  - cohesity
+  - confluent
+  - databricks
+  - datadog
+  - deel
+  - digicert
+  - doordash
+  - elastic
+  - figma
+  - gitlab
+  - google
+  - hashicorp
+  - hubspot
+  - instacart
+  - lyft
+  - microsoft
+  - mongodb
+  - netapp
+  - okta
+  - oracle
+  - palantir
+  - paypal
+  - rippling
+  - salesforce
+  - sentry
+  - snowflake
+  - splunk
+  - stripe
+  - twilio
+  - uber
+  - visa
+  - vmware
+  - workday
+  - zoom

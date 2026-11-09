@@ -1,0 +1,9 @@
+requests
+beautifulsoup4
+lxml
+playwright
+python-dotenv
+apscheduler
+greenlet
+curl_cffi
+pyyaml

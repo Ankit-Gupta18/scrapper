@@ -1,0 +1,546 @@
+defaults:
+  filters:
+    include_locations:
+    # India-only. "remote" alone was permitting every global-remote job
+    # (GitLab's `location="Remote"`, Stripe's "Remote, Americas") to pass.
+    # India-remote postings carry "India" in the location string too, so they
+    # still match without "remote" being here.
+    - india
+    - bengaluru
+    - bangalore
+    - mumbai
+    - hyderabad
+    - pune
+    - delhi
+    - gurgaon
+    - noida
+    - chennai
+    include_titles:
+    - engineer
+    - developer
+    - sde
+    - sdet
+    - software
+    - frontend
+    - backend
+    - fullstack
+    - full stack
+    - mts
+    - member of technical staff
+    exclude_titles:
+    # Mid-junior/entry only — mirrors the legacy custom scrapers' choice to
+    # drop senior/lead/staff/principal; keeps feed focused on roles typical
+    # for 0-5 YOE candidates.
+    - intern
+    - internship
+    - manager
+    - director
+    - principal
+    - staff
+    - senior
+    - lead
+    - vp
+    - hardware
+    - support
+    - qa
+    - sr
+companies:
+# --- Keka (Indian ATS SaaS) ---
+# Add rows by subdomain; verified live against minfy.keka.com (92 open postings).
+- provider: keka
+  company: Minfy
+  enabled: true
+  board: minfy
+# --- Darwinbox (Indian HR SaaS, used by big enterprises) ---
+# Verified live: delhivery (7), cars24 (7), zepto (1) via alljobs API.
+- provider: darwinbox
+  company: Delhivery
+  enabled: true
+  board: delhivery
+- provider: darwinbox
+  company: Cars24
+  enabled: true
+  board: cars24
+- provider: darwinbox
+  company: Zepto
+  enabled: true
+  board: zepto
+# --- Phenom (vendor hosting many enterprise career sites) ---
+# board = careers host; the vendor's own Phenom site is used as a working seed.
+- provider: phenom
+  company: Phenom
+  enabled: true
+  board: careers.phenom.com
+# --- Ashby GraphQL (for tenants whose Posting API returns empty) ---
+# Falls back to the embed GraphQL endpoint that Ashby's own widget calls.
+- provider: ashby_graphql
+  company: Deel
+  enabled: true
+  board: deel
+- provider: ashby_graphql
+  company: Scaler
+  enabled: true
+  board: scaler
+# --- Category B parity-safe migrations (legacy file produces identical ID set) ---
+# singlestore / lingaro / porch — audit on 2026-10-27 showed PARITY with legacy.
+# Legacy file can be deleted once this row is verified in production.
+- provider: greenhouse
+  company: SingleStore
+  enabled: true
+  board: singlestore
+- provider: lever
+  company: Lingaro Group
+  enabled: true
+  board: lingarogroup
+- provider: workday
+  company: Porch
+  enabled: true
+  tenant_host: porch.wd1.myworkdayjobs.com
+  client_slug: porch
+  site_slug: careers
+  board: porch/careers
+  applied_facets:
+    locationCountry: ["c4f78be1a8f14da0ab49ce1162348a5e"]
+# --- Category A migration (legacy companies/*.py files folded into catalog) ---
+# Each row replaces a 10-20 line Python file that did nothing but set the
+# board attribute. Behavior preserved via the catalog's default filters.
+- provider: greenhouse
+  company: Bloomreach
+  enabled: true
+  board: bloomreach
+- provider: greenhouse
+  company: Bugcrowd
+  enabled: true
+  board: bugcrowd
+- provider: greenhouse
+  company: Celigo
+  enabled: true
+  board: celigo
+- provider: greenhouse
+  company: Crunchyroll
+  enabled: true
+  board: crunchyroll
+- provider: greenhouse
+  company: DoorDash
+  enabled: true
+  board: doordashindia   # India-specific GH board
+- provider: greenhouse
+  company: Harness
+  enabled: true
+  board: harnessinc
+- provider: greenhouse
+  company: Yugabyte
+  enabled: true
+  board: yugabyte
+- provider: ashby
+  company: Harvey
+  enabled: true
+  board: harvey
+- provider: ashby
+  company: Weave
+  enabled: true
+  board: weave
+- provider: lever
+  company: H1
+  enabled: true
+  board: h1
+- provider: workable
+  company: Writesonic
+  enabled: true
+  board: writesonic
+- provider: workday
+  company: Zoetis
+  enabled: true
+  tenant_host: zoetis.wd5.myworkdayjobs.com
+  client_slug: zoetis
+  site_slug: Zoetis_Intl
+  board: zoetis/Zoetis_Intl
+- provider: workday
+  company: Alteryx
+  enabled: true
+  tenant_host: alteryx.wd108.myworkdayjobs.com
+  client_slug: alteryx
+  site_slug: AlteryxCareers
+  board: alteryx/AlteryxCareers
+  applied_facets:
+    locationCountry: ["c4f78be1a8f14da0ab49ce1162348a5e"]
+    timeType: ["a2c492480538018a67f2782eb3277700"]
+    jobFamilyGroup: ["d4c81826a4e30196ed75d311852aa6d0"]
+- provider: workday
+  company: Zoom
+  enabled: true
+  tenant_host: zoom.wd5.myworkdayjobs.com
+  client_slug: zoom
+  site_slug: Zoom
+  board: zoom/Zoom
+- provider: workday
+  company: Arctic Wolf
+  enabled: true
+  tenant_host: arcticwolf.wd1.myworkdayjobs.com
+  client_slug: arcticwolf
+  site_slug: External
+  board: arcticwolf/External
+  applied_facets:
+    locations: ["d51061531c321001b5577d7ba7680000", "6f28b52714e110011a619f68ed860000"]
+    timeType: ["b59a5bae2e611010aca4a2a8f89f0000"]
+# --- MAANG+ zero-code additions (existing adapters cover them) ---
+# Verified live 2026-10-27 — each probed and confirmed on its stated ATS.
+- provider: workday
+  company: Nvidia
+  enabled: true
+  tenant_host: nvidia.wd5.myworkdayjobs.com
+  client_slug: nvidia
+  site_slug: NVIDIAExternalCareerSite
+  board: nvidia/NVIDIAExternalCareerSite
+- provider: workday
+  company: Adobe
+  enabled: true
+  tenant_host: adobe.wd5.myworkdayjobs.com
+  client_slug: adobe
+  site_slug: external_experienced
+  board: adobe/external_experienced
+- provider: lever
+  company: LinkedIn
+  enabled: true
+  board: linkedin  # 23 postings, 14 Bangalore when probed
+- provider: lever
+  company: Spotify
+  enabled: true
+  board: spotify  # Lever host; 0 India today but ATS is live
+- provider: greenhouse
+  company: Reddit
+  enabled: true
+  board: reddit
+# --- Imported from kalil0321/ats-scrapers via scripts/import_from_ats_scrapers.py ---
+- provider: ashby
+  company: Confluent
+  enabled: true
+  board: confluent
+- provider: ashby
+  company: Deel
+  enabled: false  # Posting API empty; served via ashby_graphql row above
+  board: deel
+- provider: ashby
+  company: Scaler
+  enabled: false  # Posting API empty; served via ashby_graphql row above
+  board: scaler
+- provider: ashby
+  company: Sentry
+  enabled: true
+  board: sentry
+- provider: ashby
+  company: Snowflake
+  enabled: true
+  board: snowflake
+- provider: greenhouse
+  company: Airbnb
+  enabled: true
+  board: airbnb
+- provider: greenhouse
+  company: Canonical
+  enabled: true
+  board: canonical
+- provider: greenhouse
+  company: Cloudflare
+  enabled: true
+  board: cloudflare
+- provider: greenhouse
+  company: Databricks
+  enabled: true
+  board: databricks
+- provider: greenhouse
+  company: Datadog
+  enabled: true
+  board: datadog
+- provider: greenhouse
+  company: DigiCert
+  enabled: true
+  board: digicert
+- provider: greenhouse
+  company: Elastic
+  enabled: true
+  board: elastic
+- provider: greenhouse
+  company: Figma
+  enabled: true
+  board: figma
+- provider: greenhouse
+  company: GitLab
+  enabled: true
+  board: gitlab
+- provider: greenhouse
+  company: Groww
+  enabled: true
+  board: groww
+- provider: greenhouse
+  company: HubSpot Product
+  enabled: true
+  board: hubspot
+- provider: greenhouse
+  company: HubSpot
+  enabled: true
+  board: hubspotjobs
+- provider: greenhouse
+  company: instacart
+  enabled: true
+  board: instacart
+- provider: greenhouse
+  company: lyft
+  enabled: true
+  board: lyft
+- provider: greenhouse
+  company: mongodb
+  enabled: true
+  board: mongodb
+- provider: greenhouse
+  company: okta
+  enabled: true
+  board: okta
+- provider: greenhouse
+  company: PhonePe
+  enabled: true
+  board: phonepe
+- provider: greenhouse
+  company: Postman
+  enabled: true
+  board: postman
+- provider: greenhouse
+  company: Razorpay Software Private Limited
+  enabled: true
+  board: razorpaysoftwareprivatelimited
+- provider: greenhouse
+  company: slice
+  enabled: true
+  board: slice
+- provider: greenhouse
+  company: Stripe
+  enabled: true
+  board: stripe
+- provider: greenhouse
+  company: Twilio
+  enabled: true
+  board: twilio
+# --- High-paying additions (probed live; India postings counted by location string) ---
+- provider: greenhouse
+  company: Rubrik
+  enabled: true
+  board: rubrik  # 31 India
+- provider: greenhouse
+  company: Coinbase
+  enabled: true
+  board: coinbase  # 11 India
+- provider: greenhouse
+  company: Zscaler
+  enabled: true
+  board: zscaler  # 83 India
+- provider: greenhouse
+  company: Anthropic
+  enabled: true
+  board: anthropic  # 6 India
+- provider: greenhouse
+  company: Tower Research
+  enabled: true
+  board: towerresearchcapital  # 10 India
+- provider: greenhouse
+  company: WorldQuant
+  enabled: true
+  board: worldquant  # 8 India
+- provider: greenhouse
+  company: Graviton
+  enabled: true
+  board: gravitonresearchcapital  # 12 India
+- provider: greenhouse
+  company: InMobi
+  enabled: true
+  board: inmobi  # 46 India
+- provider: greenhouse
+  company: Pure Storage
+  enabled: true
+  board: purestorage  # 65 India
+- provider: greenhouse
+  company: Zeta Global
+  enabled: true
+  board: zetaglobal  # 34 India
+- provider: greenhouse
+  company: Sigmoid
+  enabled: true
+  board: sigmoid  # 37 India
+- provider: greenhouse
+  company: Samsara
+  enabled: true
+  board: samsara  # 5 India
+- provider: lever
+  company: Zeta
+  enabled: true
+  board: zeta  # 23 India
+- provider: ashby
+  company: OpenAI
+  enabled: true
+  board: openai  # 7 India
+- provider: ashby
+  company: Tekion
+  enabled: true
+  board: tekion  # 65 India
+- provider: ashby
+  company: Anyscale
+  enabled: true
+  board: anyscale  # 5 India
+- provider: workday
+  company: Mastercard
+  enabled: true
+  tenant_host: mastercard.wd1.myworkdayjobs.com
+  client_slug: mastercard
+  site_slug: CorporateCareers
+  board: mastercard/CorporateCareers
+- provider: workday
+  company: Cisco
+  enabled: true
+  tenant_host: cisco.wd5.myworkdayjobs.com
+  client_slug: cisco
+  site_slug: Cisco_Careers
+  board: cisco/Cisco_Careers
+- provider: workday
+  company: Wells Fargo
+  enabled: true
+  tenant_host: wf.wd1.myworkdayjobs.com
+  client_slug: wf
+  site_slug: WellsFargoJobs
+  board: wf/WellsFargoJobs
+- provider: workday
+  company: Intel
+  enabled: true
+  tenant_host: intel.wd1.myworkdayjobs.com
+  client_slug: intel
+  site_slug: External
+  board: intel/External
+- provider: workday
+  company: Micron
+  enabled: true
+  tenant_host: micron.wd1.myworkdayjobs.com
+  client_slug: micron
+  site_slug: External
+  board: micron/External
+- provider: workday
+  company: Cadence
+  enabled: true
+  tenant_host: cadence.wd1.myworkdayjobs.com
+  client_slug: cadence
+  site_slug: External_Careers
+  board: cadence/External_Careers
+- provider: workday
+  company: Sony
+  enabled: true
+  tenant_host: sonyglobal.wd1.myworkdayjobs.com
+  client_slug: sonyglobal
+  site_slug: SonyGlobalCareers
+  board: sonyglobal/SonyGlobalCareers
+- provider: workday
+  company: Broadcom
+  enabled: true
+  tenant_host: broadcom.wd1.myworkdayjobs.com
+  client_slug: broadcom
+  site_slug: External_Career
+  board: broadcom/External_Career
+- provider: workday
+  company: Expedia
+  enabled: true
+  tenant_host: expedia.wd108.myworkdayjobs.com
+  client_slug: expedia
+  site_slug: search
+  board: expedia/search
+- provider: lever
+  company: CRED
+  enabled: true
+  board: cred
+- provider: lever
+  company: Freshworks
+  enabled: true
+  board: freshworks
+- provider: lever
+  company: Meesho
+  enabled: true
+  board: meesho
+- provider: lever
+  company: Mindtickle
+  enabled: true
+  board: mindtickle
+- provider: lever
+  company: Palantir Technologies
+  enabled: true
+  board: palantir
+- provider: lever
+  company: Paytm
+  enabled: true
+  board: paytm
+- provider: workable
+  company: Akamai
+  enabled: true
+  board: akamai
+- provider: workable
+  company: Cars24
+  enabled: false  # Cars24 is on Darwinbox (row above); Workable row is stale
+  board: cars24
+- provider: workable
+  company: Microsoft
+  enabled: false  # Microsoft is NOT on Workable; custom scraper pending
+  board: microsoft
+- provider: workable
+  company: Postman
+  enabled: true
+  board: postman
+- provider: workday
+  company: Autodesk
+  enabled: true
+  tenant_host: autodesk.wd1.myworkdayjobs.com
+  client_slug: autodesk
+  site_slug: ext
+  board: autodesk/ext
+- provider: workday
+  company: BrowserStack
+  enabled: true
+  tenant_host: browserstack.wd3.myworkdayjobs.com
+  client_slug: browserstack
+  site_slug: external
+  board: browserstack/external
+- provider: workday
+  company: Cohesity
+  enabled: true
+  tenant_host: cohesity.wd5.myworkdayjobs.com
+  client_slug: cohesity
+  site_slug: cohesity_careers
+  board: cohesity/cohesity_careers
+- provider: workday
+  company: PayPal
+  enabled: true
+  tenant_host: paypal.wd1.myworkdayjobs.com
+  client_slug: paypal
+  site_slug: jobs
+  board: paypal/jobs
+- provider: workday
+  company: Salesforce
+  enabled: true
+  tenant_host: salesforce.wd12.myworkdayjobs.com
+  client_slug: salesforce
+  site_slug: external_career_site
+  board: salesforce/external_career_site
+- provider: workday
+  company: Visa
+  enabled: true
+  tenant_host: visa.wd5.myworkdayjobs.com
+  client_slug: visa
+  site_slug: visa
+  board: visa/visa
+- provider: workday
+  company: Workday
+  enabled: true
+  tenant_host: workday.wd5.myworkdayjobs.com
+  client_slug: workday
+  site_slug: workday
+  board: workday/workday
+- provider: workday
+  company: Workday
+  enabled: true
+  tenant_host: workday.wd5.myworkdayjobs.com
+  client_slug: workday
+  site_slug: workday_early_career
+  board: workday/workday_early_career

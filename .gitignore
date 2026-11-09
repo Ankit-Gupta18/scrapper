@@ -1,0 +1,23 @@
+
+#Ignore cursor AI rules
+.cursor/rules/codacy.mdc
+
+# Secrets - never commit
+.env
+
+# Environments / caches
+.venv/
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+
+# Runtime output
+scraper.log
+.log_last_cleared
+job_links/
+database/jobs.db
+
+# Local macOS scheduler state/logs (scripts themselves are committed)
+scheduler/*.log
+scheduler/.scheduled_wakes
