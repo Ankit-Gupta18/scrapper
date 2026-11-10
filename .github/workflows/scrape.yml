@@ -2,9 +2,10 @@ name: Job scraper
 
 on:
   schedule:
-    # Every 2 hours (UTC), at minute 17. Avoid minute 0: GitHub drops or delays scheduled
-    # runs most at the top of the hour. Runs are still best-effort and can be late.
-    - cron: "17 */2 * * *"
+    # Every 2 hours at minute 17 (UTC), only 04:17-18:17 UTC = 09:47-23:47 IST, so nothing is
+    # scheduled between 12am and 9am IST. Minute 17 (not 0) because GitHub drops/delays scheduled
+    # runs most at the top of the hour. Runs are best-effort and can be late.
+    - cron: "17 4-18/2 * * *"
   workflow_dispatch:
     inputs:
       baseline:
@@ -21,7 +22,32 @@ permissions:
   contents: read
 
 jobs:
+  # Safety net: a scheduled run that GitHub starts late (e.g. 18:17 UTC slot starting after
+  # midnight IST) is skipped during quiet hours. Manual runs always go ahead.
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      run: ${{ steps.check.outputs.run }}
+    steps:
+      - id: check
+        env:
+          EVENT: ${{ github.event_name }}
+          QUIET_START_HOUR_IST: "0"   # inclusive
+          QUIET_END_HOUR_IST: "9"     # exclusive -> quiet 12:00am to 8:59am IST
+        run: |
+          HOUR=$(TZ=Asia/Kolkata date +%-H)
+          if [ "$EVENT" = "schedule" ] && [ "$HOUR" -ge "$QUIET_START_HOUR_IST" ] && [ "$HOUR" -lt "$QUIET_END_HOUR_IST" ]; then
+            echo "Quiet hours (IST hour $HOUR) - skipping this scheduled run"
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "IST hour $HOUR - running"
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
+
   scrape:
+    needs: gate
+    if: needs.gate.outputs.run == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
