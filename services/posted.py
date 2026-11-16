@@ -25,17 +25,36 @@ def _fmt(dt: datetime, with_time: bool, tz_label: str = "") -> str:
     return f"{text} {tz_label}".strip()
 
 
-def _from_epoch(value: float) -> Optional[str]:
+def _ago(dt: datetime, now: Optional[datetime]) -> str:
+    """'25 min ago' / '3 hr 10 min ago' / '2 days ago' for a timezone-aware timestamp."""
+    minutes = int(((now or datetime.now(timezone.utc)) - dt).total_seconds() // 60)
+    if minutes < 1:
+        return "just now"
+    if minutes < 60:
+        return f"{minutes} min ago"
+    if minutes < 24 * 60:
+        hours, mins = divmod(minutes, 60)
+        return f"{hours} hr {mins} min ago" if mins else f"{hours} hr ago"
+    days = minutes // (24 * 60)
+    return f"{days} day{'s' if days != 1 else ''} ago"
+
+
+def _exact(dt: datetime, now: Optional[datetime]) -> str:
+    """Absolute IST time-stamp with how long ago it was, e.g. '25 min ago (16 Nov 2026, 09:10 PM IST)'."""
+    return f"{_ago(dt, now)} ({_fmt(dt.astimezone(IST), True, 'IST')})"
+
+
+def _from_epoch(value: float, now: Optional[datetime] = None) -> Optional[str]:
     if value > 1e14:      # microseconds
         value /= 1e6
     elif value > 1e11:    # milliseconds
         value /= 1e3
     if value < 1e9:       # not a plausible timestamp
         return None
-    return _fmt(datetime.fromtimestamp(value, tz=timezone.utc).astimezone(IST), True, "IST")
+    return _exact(datetime.fromtimestamp(value, tz=timezone.utc), now)
 
 
-def _from_iso(text: str) -> Optional[str]:
+def _from_iso(text: str, now: Optional[datetime] = None) -> Optional[str]:
     iso = text.strip()
     if iso.endswith(("Z", "z")):
         iso = iso[:-1] + "+00:00"
@@ -47,7 +66,9 @@ def _from_iso(text: str) -> Optional[str]:
         return None
     has_time = "T" in iso or " " in iso
     if dt.tzinfo:
-        return _fmt(dt.astimezone(IST), has_time, "IST" if has_time else "")
+        if has_time:
+            return _exact(dt, now)
+        return _fmt(dt.astimezone(IST), False)
     return _fmt(dt, has_time)
 
 
@@ -59,7 +80,7 @@ def format_posted(raw: Any, now: Optional[datetime] = None) -> Optional[str]:
         return None
 
     try:
-        return _from_epoch(float(text))
+        return _from_epoch(float(text), now)
     except ValueError:
         pass
 
@@ -76,7 +97,7 @@ def format_posted(raw: Any, now: Optional[datetime] = None) -> Optional[str]:
             return f"over {days} days ago"
         return f"{(today - timedelta(days=days)).strftime('%d %b %Y')} ({days} days ago)"
 
-    iso = _from_iso(text)
+    iso = _from_iso(text, now)
     if iso:
         return iso
     for fmt, with_time in _NAIVE_FORMATS:
