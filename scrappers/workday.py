@@ -4,7 +4,7 @@ import random
 import threading
 import time
 from datetime import datetime, timezone
-import requests
+from curl_cffi import requests  # Chrome TLS fingerprint: python-requests' is throttled harder
 from typing import List, Dict, Any, Optional, Sequence
 from scrappers.base import BaseJobScraper
 
@@ -12,9 +12,44 @@ from scrappers.base import BaseJobScraper
 WORKDAY_MAX_CONCURRENT = max(1, int(os.getenv("WORKDAY_MAX_CONCURRENT", "3")))  # tenants paged at once
 PAGE_DELAY_SEC = float(os.getenv("WORKDAY_PAGE_DELAY", "0.4"))   # pause between pages of one tenant
 MAX_ATTEMPTS = 4          # per page, on 429 / 5xx
-BACKOFF_BASE_SEC = 5      # 5s, 10s, 20s (or Retry-After if the server sends it)
-BACKOFF_MAX_SEC = 60
+BACKOFF_BASE_SEC = 10     # 10s, 20s, 40s (or Retry-After if the server sends it)
+BACKOFF_MAX_SEC = 90
 _WORKDAY_SLOTS = threading.BoundedSemaphore(WORKDAY_MAX_CONCURRENT)
+
+# Shared state: when ANY tenant gets a 429 every Workday request pauses (the limit is per source IP,
+# so hammering other tenants meanwhile only extends the block). If several tenants in a row stay
+# blocked after all retries, the IP is blocked: skip the rest of the run quickly instead of burning
+# time (they are retried on the next run, and the failure is reported as usual).
+_state_lock = threading.Lock()
+_cooldown_until = 0.0
+_blocked_streak = 0
+BLOCK_BREAKER_THRESHOLD = int(os.getenv("WORKDAY_BREAKER_THRESHOLD", "4"))
+
+
+def _wait_for_cooldown():
+    while True:
+        with _state_lock:
+            remaining = _cooldown_until - time.time()
+        if remaining <= 0:
+            return
+        time.sleep(min(remaining, 5))
+
+
+def _start_cooldown(seconds: float):
+    global _cooldown_until
+    with _state_lock:
+        _cooldown_until = max(_cooldown_until, time.time() + seconds)
+
+
+def _record_outcome(blocked: bool):
+    global _blocked_streak
+    with _state_lock:
+        _blocked_streak = _blocked_streak + 1 if blocked else 0
+
+
+def _breaker_open() -> bool:
+    with _state_lock:
+        return _blocked_streak >= BLOCK_BREAKER_THRESHOLD
 
 # Server-side narrowing. Scrapers only keep India roles, so by default Workday is asked for jobs
 # matching this text instead of every job worldwide (4-7x fewer requests). The search is not
@@ -57,32 +92,48 @@ class BaseWorkdayScraper(BaseJobScraper):
     def site_base_url(self) -> str:
         return f"https://{self.tenant_host}/en-US/{self.site_slug}"
 
-    def _post_with_retry(self, session: requests.Session, payload: dict, headers: dict):
+    def _post_with_retry(self, session, payload: dict, headers: dict):
         """POST one page; on 429 / 5xx back off (honouring Retry-After) and retry."""
         for attempt in range(MAX_ATTEMPTS):
+            _wait_for_cooldown()
             response = session.post(self.api_url, json=payload, headers=headers, timeout=15)
-            if response.status_code != 429 and response.status_code < 500:
+            status = response.status_code
+            if status != 429 and status < 500:
                 response.raise_for_status()
                 return response
-            if attempt == MAX_ATTEMPTS - 1:
-                response.raise_for_status()
-            retry_after = response.headers.get("Retry-After", "")
+            retry_after = str(response.headers.get("Retry-After", ""))
             wait = float(retry_after) if retry_after.isdigit() else BACKOFF_BASE_SEC * (2 ** attempt)
-            time.sleep(min(wait, BACKOFF_MAX_SEC) + random.uniform(0, 2))
+            wait = min(wait, BACKOFF_MAX_SEC) + random.uniform(0, 3)
+            if attempt == MAX_ATTEMPTS - 1:
+                raise RuntimeError(
+                    f"HTTP {status} from {self.tenant_host} at offset {payload.get('offset')} "
+                    f"after {MAX_ATTEMPTS} attempts (Retry-After={retry_after or 'none'})"
+                )
+            _start_cooldown(wait)
         raise RuntimeError("unreachable")
 
     def fetch_jobs(self) -> List[Dict[str, Any]]:
         # Workday throttles per source IP, and GitHub runners share IPs. Only a few tenants are
         # paged at a time (class-level semaphore shared by every Workday scraper in the process).
         with _WORKDAY_SLOTS:
+            if _breaker_open():
+                raise RuntimeError(
+                    f"Skipped: Workday keeps answering 429 to this IP ({BLOCK_BREAKER_THRESHOLD}+ tenants "
+                    "in a row blocked); will retry next run"
+                )
             merged, seen = [], set()
-            for query in self._queries():
-                for item in self._fetch_all_pages(query):
-                    key = item.get("externalPath") or (item.get("bulletFields") or [None])[0] or id(item)
-                    if key in seen:
-                        continue
-                    seen.add(key)
-                    merged.append(item)
+            try:
+                for query in self._queries():
+                    for item in self._fetch_all_pages(query):
+                        key = item.get("externalPath") or (item.get("bulletFields") or [None])[0] or id(item)
+                        if key in seen:
+                            continue
+                        seen.add(key)
+                        merged.append(item)
+            except RuntimeError as e:
+                _record_outcome(blocked=str(e).startswith("HTTP 429"))
+                raise
+            _record_outcome(blocked=False)
             return merged
 
     def _fetch_all_pages(self, search_text: str = "") -> List[Dict[str, Any]]:
@@ -94,10 +145,9 @@ class BaseWorkdayScraper(BaseJobScraper):
         headers = {
             "accept": "application/json",
             "content-type": "application/json",
-            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36",
         }
 
-        with requests.Session() as session:
+        with requests.Session(impersonate="chrome120") as session:
             while total is None or offset < total:
                 payload = {
                     "appliedFacets": self.applied_facets,
