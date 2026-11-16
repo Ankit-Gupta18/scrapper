@@ -22,7 +22,7 @@
   "sharechat": true,
   "singlestore": true,
   "spotdraft": false,
-  "texasinstruments": true,
+  "texasinstruments": false,
   "toast": false,
   "zoho": true,
   "airbnb": true,

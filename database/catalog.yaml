@@ -187,7 +187,7 @@ companies:
 # Verified live 2026-10-27 — each probed and confirmed on its stated ATS.
 - provider: workday
   company: Nvidia
-  enabled: true
+  enabled: false  # disabled: removed by request
   tenant_host: nvidia.wd5.myworkdayjobs.com
   client_slug: nvidia
   site_slug: NVIDIAExternalCareerSite
@@ -408,35 +408,35 @@ companies:
   board: wf/WellsFargoJobs
 - provider: workday
   company: Intel
-  enabled: true
+  enabled: false  # disabled: removed by request
   tenant_host: intel.wd1.myworkdayjobs.com
   client_slug: intel
   site_slug: External
   board: intel/External
 - provider: workday
   company: Micron
-  enabled: true
+  enabled: false  # disabled: removed by request
   tenant_host: micron.wd1.myworkdayjobs.com
   client_slug: micron
   site_slug: External
   board: micron/External
 - provider: workday
   company: Cadence
-  enabled: true
+  enabled: false  # disabled: removed by request
   tenant_host: cadence.wd1.myworkdayjobs.com
   client_slug: cadence
   site_slug: External_Careers
   board: cadence/External_Careers
 - provider: workday
   company: Sony
-  enabled: true
+  enabled: false  # disabled: removed by request
   tenant_host: sonyglobal.wd1.myworkdayjobs.com
   client_slug: sonyglobal
   site_slug: SonyGlobalCareers
   board: sonyglobal/SonyGlobalCareers
 - provider: workday
   company: Broadcom
-  enabled: true
+  enabled: false  # disabled: removed by request
   tenant_host: broadcom.wd1.myworkdayjobs.com
   client_slug: broadcom
   site_slug: External_Career
