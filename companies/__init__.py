@@ -119,6 +119,8 @@ def _build_from_catalog_row(row: dict, defaults: dict):
         scraper.client_slug = row["client_slug"]
         scraper.site_slug = row["site_slug"]
         scraper.applied_facets = row.get("applied_facets", {})
+        if "search_texts" in row:  # optional per-row override; [""] = fetch everything
+            scraper.search_texts = row["search_texts"]
     elif provider == "keka":
         from scrappers.keka import BaseKekaScraper
         scraper = BaseKekaScraper()

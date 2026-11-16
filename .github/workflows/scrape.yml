@@ -49,7 +49,7 @@ jobs:
     needs: gate
     if: needs.gate.outputs.run == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 40   # Workday tenants are now paged politely (few at a time), so runs take longer
     env:
       MAX_WORKERS: "50"
       USE_TELEGRAM: "false"
