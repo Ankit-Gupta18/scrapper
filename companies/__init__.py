@@ -121,6 +121,10 @@ def _build_from_catalog_row(row: dict, defaults: dict):
         scraper.applied_facets = row.get("applied_facets", {})
         if "search_texts" in row:  # optional per-row override; [""] = fetch everything
             scraper.search_texts = row["search_texts"]
+    elif provider == "smartrecruiters":
+        from scrappers.smartrecruiters import BaseSmartRecruitersScraper
+        scraper = BaseSmartRecruitersScraper()
+        scraper.sr_company_id = row["board"]
     elif provider == "keka":
         from scrappers.keka import BaseKekaScraper
         scraper = BaseKekaScraper()

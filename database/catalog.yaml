@@ -605,3 +605,48 @@ companies:
   company: Notion
   enabled: true
   board: notion  # 2 India / 1 eng
+# --- Added 2026-11-16 (SmartRecruiters rows use scrappers/smartrecruiters.py, country=in filter) ---
+- provider: greenhouse
+  company: Squarepoint Capital
+  enabled: true
+  board: squarepointcapital  # 23 India when probed
+- provider: greenhouse
+  company: AQR
+  enabled: true
+  board: aqr  # 10 India
+- provider: greenhouse
+  company: Roku
+  enabled: true
+  board: roku  # 3 India
+- provider: greenhouse
+  company: Flexport
+  enabled: true
+  board: flexport  # 4 India, none engineering when probed
+- provider: ashby
+  company: UiPath
+  enabled: true
+  board: uipath  # 9 India
+- provider: ashby
+  company: Atlan
+  enabled: true
+  board: atlan  # 3 India
+- provider: smartrecruiters
+  company: Wise
+  enabled: true
+  board: wise  # 11 India
+- provider: smartrecruiters
+  company: Arista Networks
+  enabled: true
+  board: aristanetworks  # 14-26 India
+- provider: smartrecruiters
+  company: ServiceNow
+  enabled: true
+  board: servicenow  # 816 postings total; country=in filter applied server-side
+- provider: smartrecruiters
+  company: Grab
+  enabled: true
+  board: grab  # India only via country=in
+- provider: smartrecruiters
+  company: Unacademy
+  enabled: true
+  board: unacademy  # 3 India
