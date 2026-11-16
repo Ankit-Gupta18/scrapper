@@ -755,3 +755,11 @@ companies:
 - provider: zerodha
   company: Zerodha
   enabled: true
+- provider: kula
+  company: MoEngage
+  enabled: true
+  board: moengage
+- provider: recruiterbox
+  company: Whatfix
+  enabled: true
+  board: whatfix101

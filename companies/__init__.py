@@ -156,6 +156,14 @@ def _build_from_catalog_row(row: dict, defaults: dict):
     elif provider == "zerodha":
         from scrappers.zerodha import BaseZerodhaScraper
         scraper = BaseZerodhaScraper()
+    elif provider == "kula":
+        from scrappers.kula import BaseKulaScraper
+        scraper = BaseKulaScraper()
+        scraper.board = row["board"]
+    elif provider == "recruiterbox":
+        from scrappers.recruiterbox import BaseRecruiterboxScraper
+        scraper = BaseRecruiterboxScraper()
+        scraper.client_name = row["board"]
     elif provider == "keka":
         from scrappers.keka import BaseKekaScraper
         scraper = BaseKekaScraper()
