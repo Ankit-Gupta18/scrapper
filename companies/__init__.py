@@ -137,6 +137,14 @@ def _build_from_catalog_row(row: dict, defaults: dict):
         scraper = BaseEightfoldPcsxScraper()
         scraper.host = row["host"]
         scraper.domain = row["domain"]
+    elif provider == "jibe":
+        from scrappers.jibe import BaseJibeScraper
+        scraper = BaseJibeScraper()
+        scraper.host = row["host"]
+    elif provider == "talentbrew":
+        from scrappers.talentbrew import BaseTalentBrewScraper
+        scraper = BaseTalentBrewScraper()
+        scraper.host = row["host"]
     elif provider == "keka":
         from scrappers.keka import BaseKekaScraper
         scraper = BaseKekaScraper()

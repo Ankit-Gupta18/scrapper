@@ -720,3 +720,19 @@ companies:
   enabled: true
   host: qualcomm.eightfold.ai
   domain: qualcomm.com
+- provider: jibe
+  company: DocuSign
+  enabled: true
+  host: careers.docusign.com
+- provider: jibe
+  company: GitHub
+  enabled: true
+  host: www.github.careers
+- provider: talentbrew
+  company: Intuit
+  enabled: true
+  host: jobs.intuit.com
+- provider: talentbrew
+  company: Arm
+  enabled: true
+  host: careers.arm.com
