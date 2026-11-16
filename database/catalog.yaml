@@ -544,3 +544,64 @@ companies:
   client_slug: workday
   site_slug: workday_early_career
   board: workday/workday_early_career
+# --- India engineering roles; verified live 2026-11-16 (Greenhouse/Ashby public APIs) ---
+- provider: greenhouse
+  company: Fivetran
+  enabled: true
+  board: fivetran  # 20 India / 14 eng when probed
+- provider: greenhouse
+  company: Netskope
+  enabled: true
+  board: netskope  # 19 India / 14 eng
+- provider: greenhouse
+  company: Druva
+  enabled: true
+  board: druva  # 11 India / 9 eng
+- provider: greenhouse
+  company: Sumo Logic
+  enabled: true
+  board: sumologic  # 12 India / 6 eng
+- provider: greenhouse
+  company: Commvault
+  enabled: true
+  board: commvault  # 10 India / 6 eng
+- provider: greenhouse
+  company: IMC Trading
+  enabled: true
+  board: imc  # 15 India / 8 eng
+- provider: greenhouse
+  company: Jump Trading
+  enabled: true
+  board: jumptrading  # 4 India / 3 eng
+- provider: greenhouse
+  company: Agoda
+  enabled: true
+  board: agoda  # 11 India / 3 eng
+- provider: greenhouse
+  company: Glance
+  enabled: true
+  board: glance  # 21 India / 4 eng
+- provider: greenhouse
+  company: JFrog
+  enabled: true
+  board: jfrog  # 6 India / 2 eng
+- provider: greenhouse
+  company: Coursera
+  enabled: true
+  board: coursera  # 7 India / 2 eng
+- provider: greenhouse
+  company: New Relic
+  enabled: true
+  board: newrelic  # 4 India / 1 eng
+- provider: greenhouse
+  company: Waymo
+  enabled: true
+  board: waymo  # 3 India / 1 eng
+- provider: greenhouse
+  company: CockroachDB
+  enabled: true
+  board: cockroachlabs  # 1 India / 1 eng
+- provider: ashby
+  company: Notion
+  enabled: true
+  board: notion  # 2 India / 1 eng
