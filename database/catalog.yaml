@@ -55,7 +55,7 @@ companies:
 # Verified live: delhivery (7), cars24 (7), zepto (1) via alljobs API.
 - provider: darwinbox
   company: Delhivery
-  enabled: true
+  enabled: false  # disabled: removed by request
   board: delhivery
 - provider: darwinbox
   company: Cars24
