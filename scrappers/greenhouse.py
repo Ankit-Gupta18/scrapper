@@ -63,7 +63,7 @@ class BaseGreenhouseScraper(BaseJobScraper):
                     "title": title,
                     "url": absolute_url,
                     "location": location_name,
-                    "updated_at": item.get("updated_at", ""),
+                    "updated_at": item.get("first_published") or item.get("updated_at", ""),  # first publish date; falls back to last update
                 }
             )
 

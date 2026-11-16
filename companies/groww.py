@@ -75,7 +75,7 @@ class GrowwScraper(BaseJobScraper):
                         "title": title,
                         "url": abs_url,
                         "location": location or "Bengaluru, India",
-                        "posted_date": item.get("updated_at", ""),
+                        "posted_date": item.get("first_published") or item.get("updated_at", ""),
                     }
                 )
 

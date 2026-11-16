@@ -5,6 +5,8 @@ from email.message import EmailMessage
 from html import escape
 from typing import List, Dict, Any, Optional
 
+from services.posted import format_posted
+
 
 class EmailService:
     """Sends one HTML summary email per run: every new job link grouped by company, plus a
@@ -42,11 +44,13 @@ class EmailService:
                 url = escape(str(job.get("url") or "#"), quote=True)
                 title = escape(str(job.get("title") or "Untitled"))
                 location = escape(str(job.get("location") or "-"))
+                posted = escape(format_posted(job.get("posted_date")) or "not provided by the site")
                 rows.append(
                     "<tr>"
                     f"<td style='padding:8px 12px;border-bottom:1px solid #eee;'>"
                     f"<a href='{url}' style='color:#1a56db;text-decoration:none;font-weight:600;'>{title}</a>"
-                    f"<div style='color:#6b7280;font-size:12px;margin-top:2px;'>{location}</div></td>"
+                    f"<div style='color:#6b7280;font-size:12px;margin-top:2px;'>{location}</div>"
+                    f"<div style='color:#6b7280;font-size:12px;margin-top:2px;'>Posted: {posted}</div></td>"
                     f"<td style='padding:8px 12px;border-bottom:1px solid #eee;text-align:right;white-space:nowrap;'>"
                     f"<a href='{url}' style='background:#1a56db;color:#fff;padding:5px 12px;"
                     f"border-radius:4px;font-size:12px;text-decoration:none;'>Apply</a></td>"
@@ -117,6 +121,7 @@ class EmailService:
             lines.append(f"== {company} ({len(jobs)}) ==")
             for idx, job in enumerate(jobs, start=1):
                 lines.append(f"{idx}. {job.get('title')} ({job.get('location')})")
+                lines.append(f"   Posted: {format_posted(job.get('posted_date')) or 'not provided by the site'}")
                 lines.append(f"   {job.get('url')}")
             lines.append("")
         if failures:

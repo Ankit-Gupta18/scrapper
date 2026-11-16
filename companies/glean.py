@@ -37,7 +37,7 @@ class GleanScraper(BaseGreenhouseScraper):
                         "title": title,
                         "url": item["url"],
                         "location": location,
-                        "posted_date": item.get("updated_at", ""),
+                        "posted_date": item.get("first_published") or item.get("updated_at", ""),
                     }
                 )
 
