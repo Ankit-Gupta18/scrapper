@@ -125,6 +125,18 @@ def _build_from_catalog_row(row: dict, defaults: dict):
         from scrappers.smartrecruiters import BaseSmartRecruitersScraper
         scraper = BaseSmartRecruitersScraper()
         scraper.sr_company_id = row["board"]
+    elif provider == "atlassian":
+        from scrappers.atlassian import BaseAtlassianScraper
+        scraper = BaseAtlassianScraper()
+    elif provider == "rippling":
+        from scrappers.rippling import BaseRipplingScraper
+        scraper = BaseRipplingScraper()
+        scraper.board = row["board"]
+    elif provider == "eightfold_pcsx":
+        from scrappers.eightfold_pcsx import BaseEightfoldPcsxScraper
+        scraper = BaseEightfoldPcsxScraper()
+        scraper.host = row["host"]
+        scraper.domain = row["domain"]
     elif provider == "keka":
         from scrappers.keka import BaseKekaScraper
         scraper = BaseKekaScraper()
