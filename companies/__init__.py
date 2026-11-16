@@ -145,6 +145,17 @@ def _build_from_catalog_row(row: dict, defaults: dict):
         from scrappers.talentbrew import BaseTalentBrewScraper
         scraper = BaseTalentBrewScraper()
         scraper.host = row["host"]
+    elif provider == "zohorecruit":
+        from scrappers.zohorecruit import BaseZohoRecruitScraper
+        scraper = BaseZohoRecruitScraper()
+        scraper.host = row["host"]
+    elif provider == "successfactors":
+        from scrappers.successfactors import BaseSuccessFactorsScraper
+        scraper = BaseSuccessFactorsScraper()
+        scraper.host = row["host"]
+    elif provider == "zerodha":
+        from scrappers.zerodha import BaseZerodhaScraper
+        scraper = BaseZerodhaScraper()
     elif provider == "keka":
         from scrappers.keka import BaseKekaScraper
         scraper = BaseKekaScraper()

@@ -736,3 +736,22 @@ companies:
   company: Arm
   enabled: true
   host: careers.arm.com
+- provider: talentbrew
+  company: Synopsys
+  enabled: true
+  host: careers.synopsys.com
+- provider: zohorecruit
+  company: Quadeye
+  enabled: true
+  host: quadeye.zohorecruit.in
+- provider: zohorecruit
+  company: Zupee
+  enabled: true
+  host: zupee.zohorecruit.in
+- provider: successfactors
+  company: PayU
+  enabled: true
+  host: careers.payu.in
+- provider: zerodha
+  company: Zerodha
+  enabled: true
