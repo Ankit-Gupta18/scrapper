@@ -331,7 +331,7 @@ companies:
   board: coinbase  # 11 India
 - provider: greenhouse
   company: Zscaler
-  enabled: true
+  enabled: false  # disabled: removed by request
   board: zscaler  # 83 India
 - provider: greenhouse
   company: Anthropic
@@ -706,7 +706,7 @@ companies:
   board: jupiter
 - provider: darwinbox
   company: Rapido
-  enabled: true
+  enabled: false  # disabled: removed by request
   board: rapido
 - provider: atlassian
   company: Atlassian
@@ -717,7 +717,7 @@ companies:
   board: rippling
 - provider: eightfold_pcsx
   company: Qualcomm
-  enabled: true
+  enabled: false  # disabled: removed by request (electronics)
   host: qualcomm.eightfold.ai
   domain: qualcomm.com
 - provider: jibe
@@ -734,11 +734,11 @@ companies:
   host: jobs.intuit.com
 - provider: talentbrew
   company: Arm
-  enabled: true
+  enabled: false  # disabled: removed by request (electronics)
   host: careers.arm.com
 - provider: talentbrew
   company: Synopsys
-  enabled: true
+  enabled: false  # disabled: removed by request (electronics / chip design)
   host: careers.synopsys.com
 - provider: zohorecruit
   company: Quadeye
