@@ -3,9 +3,9 @@ from collections import defaultdict
 from datetime import datetime
 from email.message import EmailMessage
 from html import escape
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Tuple
 
-from services.posted import format_posted
+from services.posted import IST, format_posted
 
 
 class EmailService:
@@ -13,12 +13,15 @@ class EmailService:
     section listing scrapers that failed (with a warning when one keeps failing)."""
 
     def __init__(self, sender: str, password: str, recipient: str,
-                 host: str = "smtp.gmail.com", port: int = 587):
+                 host: str = "smtp.gmail.com", port: int = 587,
+                 profile_links: Optional[List[Tuple[str, str, str]]] = None):
         self.sender = sender
         self.password = password
         self.recipient = recipient
         self.host = host
         self.port = port
+        # (label, url, hex colour) buttons shown under the header, e.g. Naukri / LinkedIn.
+        self.profile_links = [(label, url, color) for label, url, color in (profile_links or []) if url]
 
     @property
     def is_configured(self) -> bool:
@@ -64,6 +67,33 @@ class EmailService:
                 f"{''.join(rows)}</table>"
             )
         return "".join(sections)
+
+    def _profiles_html(self) -> str:
+        if not self.profile_links:
+            return ""
+        buttons = "".join(
+            f"<a href='{escape(url, quote=True)}' style='display:inline-block;background:{escape(color, quote=True)};"
+            "color:#fff;padding:9px 16px;margin:4px 8px 4px 0;border-radius:6px;font-size:13px;"
+            f"font-weight:600;text-decoration:none;'>{escape(label)} &rarr;</a>"
+            for label, url, color in self.profile_links
+        )
+        return (
+            "<div style='margin:16px 0 4px;padding:14px 16px;background:#f9fafb;border:1px solid #e5e7eb;"
+            "border-radius:6px;'>"
+            "<div style='font-size:14px;font-weight:700;color:#111827;margin-bottom:6px;'>"
+            "Keep your profiles fresh</div>"
+            "<div style='font-size:12px;color:#6b7280;margin-bottom:6px;'>"
+            "A quick update bumps you up in recruiter searches.</div>"
+            f"{buttons}</div>"
+        )
+
+    def _profiles_text(self) -> List[str]:
+        if not self.profile_links:
+            return []
+        lines = ["== Keep your profiles fresh =="]
+        lines += [f"{label}: {url}" for label, url, _ in self.profile_links]
+        lines.append("")
+        return lines
 
     def _failures_html(self, failures: List[Dict[str, Any]]) -> str:
         if not failures:
@@ -111,12 +141,13 @@ class EmailService:
             f"<div style='font-size:20px;font-weight:700;'>{title}</div>"
             f"<div style='font-size:13px;opacity:.9;margin-top:4px;'>{sub} &middot; {escape(run_label)}</div></div>"
             "<div style='background:#fff;padding:8px 24px 24px;border-radius:0 0 8px 8px;'>"
-            f"{self._jobs_html(grouped)}{self._failures_html(failures)}</div>"
+            f"{self._profiles_html()}{self._jobs_html(grouped)}{self._failures_html(failures)}</div>"
             "</div></body></html>"
         )
 
     def _build_text(self, grouped, total: int, failures, run_label: str) -> str:
         lines = [f"New job openings - {total} job(s) - {run_label}", ""]
+        lines += self._profiles_text()
         for company, jobs in grouped.items():
             lines.append(f"== {company} ({len(jobs)}) ==")
             for idx, job in enumerate(jobs, start=1):
@@ -148,7 +179,8 @@ class EmailService:
             return None
 
         grouped = self._group(jobs)
-        run_label = datetime.now().strftime("%d %b %Y, %I:%M %p")
+        # Always IST: GitHub runners are UTC, so a naive datetime.now() would show the wrong hour.
+        run_label = datetime.now(IST).strftime("%d %b %Y, %I:%M %p IST")
         text_body = self._build_text(grouped, len(jobs), failures, run_label)
         flagged = sum(1 for f in failures if f.get("flagged"))
 

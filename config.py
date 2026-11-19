@@ -25,6 +25,10 @@ class Config:
     # Set SEND_EMAIL=false to record jobs as seen without emailing (used for baseline runs)
     SEND_EMAIL = os.getenv("SEND_EMAIL", "true").strip().lower() in ("1", "true", "yes")
 
+    # Profile links shown in every summary email (override via .env if they change)
+    NAUKRI_PROFILE_URL = os.getenv("NAUKRI_PROFILE_URL", "https://www.naukri.com/mnjuser/profile")
+    LINKEDIN_PROFILE_URL = os.getenv("LINKEDIN_PROFILE_URL", "https://www.linkedin.com/in/ankit-gupta-953a0a1b2/")
+
     # Telegram
     TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
     TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")

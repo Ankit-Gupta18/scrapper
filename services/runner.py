@@ -20,7 +20,11 @@ class JobRunner:
         else:
             self.telegram = ConsoleService()
         self.email = EmailService(Config.EMAIL_SENDER, Config.EMAIL_APP_PASSWORD, Config.EMAIL_TO,
-                                  Config.SMTP_HOST, Config.SMTP_PORT)
+                                  Config.SMTP_HOST, Config.SMTP_PORT,
+                                  profile_links=[
+                                      ("Update Naukri profile", Config.NAUKRI_PROFILE_URL, "#0b5fff"),
+                                      ("Update LinkedIn profile", Config.LINKEDIN_PROFILE_URL, "#0a66c2"),
+                                  ])
         self.new_jobs = []
         self._new_job_keys = set()
         self.failures = []
